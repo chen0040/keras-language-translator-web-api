@@ -40,6 +40,19 @@ input_idx2char = dict([(i, char) for i, char in enumerate(input_characters)])
 target_char2idx = dict([(char, i) for i, char in enumerate(target_characters)])
 target_idx2char = dict([(i, char) for i, char in enumerate(target_characters)])
 
+np.save('models/eng-to-fra-char-input-char2idx.npy', input_char2idx)
+np.save('models/eng-to-fra-char-target-char2idx.npy', target_char2idx)
+np.save('models/eng-to-fra-char-input-idx2char.npy', input_idx2char)
+np.save('models/eng-to-fra-char-target-idx2char.npy', target_idx2char)
+
+context = dict()
+context['max_encoder_seq_length'] = max_encoder_seq_length
+context['max_decoder_seq_length'] = max_decoder_seq_length
+context['num_encoder_tokens'] = num_encoder_tokens
+context['num_decoder_tokens'] = num_decoder_tokens
+
+np.save('models/eng-to-fra-char-context.npy', context)
+
 encoder_input_data = np.zeros((len(input_texts), max_encoder_seq_length, num_encoder_tokens), dtype='float32')
 decoder_input_data = np.zeros((len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
 decoder_target_data = np.zeros((len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
@@ -53,15 +66,15 @@ for i, (input_text, target_text) in enumerate(zip(input_texts, target_texts)):
             decoder_target_data[i, t-1, target_char2idx[char]] = 1
 
 
-encoder_inputs = Input(shape=(None, num_encoder_tokens))
-encoder = LSTM(units=HIDDEN_UNITS, return_state=True)
+encoder_inputs = Input(shape=(None, num_encoder_tokens), name='encoder_inputs')
+encoder = LSTM(units=HIDDEN_UNITS, return_state=True, name="encoder_lstm")
 encoder_outputs, state_h, state_c = encoder(encoder_inputs)
 encoder_states = [state_h, state_c]
 
-decoder_inputs = Input(shape=(None, num_decoder_tokens))
-decoder_lstm = LSTM(units=HIDDEN_UNITS, return_sequences=True, return_state=True)
+decoder_inputs = Input(shape=(None, num_decoder_tokens), name='decoder_inputs')
+decoder_lstm = LSTM(units=HIDDEN_UNITS, return_sequences=True, return_state=True, name='decoder_lstm')
 decoder_outputs, _, _ = decoder_lstm(decoder_inputs, initial_state=encoder_states)
-decoder_dense = Dense(num_decoder_tokens, activation='softmax')
+decoder_dense = Dense(num_decoder_tokens, activation='softmax', name='decoder_dense')
 decoder_outputs = decoder_dense(decoder_outputs)
 
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
@@ -69,22 +82,11 @@ model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, validation_split=0.2)
 
+json = model.to_json()
+open('models/eng-to-fra-char-architecture.json', 'w').write(json)
+model.save_weights('models/eng-to-fra-char-weights.h5')
 
-encoder_model = Model(encoder_inputs, encoder_states)
 
-json = encoder_model.to_json()
-open('models/eng-to-fra-char-encoder-architecture.json', 'w').write(json)
-encoder_model.save('models/eng-to-fra-char-encoder-weights.h5')
-
-decoder_state_inputs = [Input(shape=(HIDDEN_UNITS, )), Input(shape=(HIDDEN_UNITS, ))]
-decoder_outputs, state_h, state_c = decoder_lstm(decoder_inputs, initial_state=decoder_state_inputs)
-decoder_states = [state_h, state_c]
-decoder_outputs = decoder_dense(decoder_outputs)
-decoder_model = Model([decoder_inputs] + decoder_state_inputs, [decoder_outputs] + decoder_states)
-
-json = decoder_model.to_json()
-open('models/eng-to-fra-char-decoder-architecture.json', 'w').write(json)
-decoder_model.save('models/eng-to-fra-char-decoder-weights.h5')
 
 
 
