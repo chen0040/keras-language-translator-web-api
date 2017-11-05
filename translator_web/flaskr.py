@@ -21,8 +21,8 @@ def about():
     return 'About Us'
 
 
-@app.route('/eng_to_fra_translator_c', methods=['POST', 'GET'])
-def eng_to_fra_translator_c():
+@app.route('/eng_to_fra_char_translator', methods=['POST', 'GET'])
+def eng_to_fra_char_translator():
     if request.method == 'POST':
         if 'sentence' not in request.form:
             flash('No sentence post')
@@ -33,8 +33,8 @@ def eng_to_fra_translator_c():
         else:
             sent = request.form['sentence']
             translated = eng_to_fra_translator_c.translate_lang(sent)
-            return render_template('eng_to_fra_translator_result.html', sentence=sent, translated=translated)
-    return render_template('eng_to_fra_translator_c.html')
+            return render_template('eng_to_fra_char_translator_result.html', sentence=sent, translated=translated)
+    return render_template('eng_to_fra_char_translator.html')
 
 
 @app.route('/lstm_sigmoid', methods=['POST', 'GET'])

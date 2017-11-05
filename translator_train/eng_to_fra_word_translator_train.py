@@ -1,6 +1,7 @@
 from keras.models import Model
 from keras.layers.recurrent import LSTM
 from keras.layers import Dense, Input, Embedding
+from keras.preprocessing.sequence import pad_sequences
 from collections import Counter
 import nltk
 import numpy as np
@@ -84,6 +85,10 @@ for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     encoder_max_seq_length = max(len(encoder_input_wids), encoder_max_seq_length)
     decoder_max_seq_length = max(len(decoder_input_wids), decoder_max_seq_length)
 
+encoder_input_data = pad_sequences(encoder_input_data, encoder_max_seq_length)
+decoder_input_data = pad_sequences(decoder_input_data, decoder_max_seq_length)
+decoder_target_data = np.array(decoder_target_data)
+
 
 context = dict()
 context['num_encoder_tokens'] = num_encoder_tokens
@@ -93,23 +98,27 @@ context['decoder_max_seq_length'] = decoder_max_seq_length
 
 np.save('models/eng-to-fra/eng-to-fra-word-context.npy', context)
 
-encoder_inputs = Input(shape=(None,), name='encoder_inputs')
-encoder_embedding = Embedding(input_dim=num_encoder_tokens, output_dim=HIDDEN_UNITS, name='encoder_embedding')
+encoder_inputs = Input(shape=(None, encoder_max_seq_length), name='encoder_inputs')
+encoder_embedding = Embedding(input_dim=num_encoder_tokens, output_dim=HIDDEN_UNITS,
+                              input_length=encoder_max_seq_length, name='encoder_embedding')
 encoder_lstm = LSTM(units=HIDDEN_UNITS, return_state=True, name='encoder_lstm')
 encoder_outputs, encoder_state_h, encoder_state_c = encoder_lstm(encoder_embedding(encoder_inputs))
 encoder_states = [encoder_state_h, encoder_state_c]
 
-decoder_inputs = Input(shape=(None,), name='decoder_inputs')
-decoder_embedding = Embedding(input_dim=num_decoder_tokens, output_dim=HIDDEN_UNITS, name='decoder_embedding')
+decoder_inputs = Input(shape=(None, decoder_max_seq_length), name='decoder_inputs')
+decoder_embedding = Embedding(input_dim=num_decoder_tokens, output_dim=HIDDEN_UNITS,
+                              input_length=decoder_max_seq_length, name='decoder_embedding')
 decoder_lstm = LSTM(units=HIDDEN_UNITS, return_state=True, return_sequences=True, name='decoder_lstm')
-decoder_outputs, decoder_state_h, decoder_state_c = decoder_lstm(decoder_embedding(decoder_inputs), initial_state=encoder_states)
+decoder_outputs, decoder_state_h, decoder_state_c = decoder_lstm(decoder_embedding(decoder_inputs),
+                                                                 initial_state=encoder_states)
 decoder_dense = Dense(units=num_decoder_tokens, activation='softmax', name='decoder_dense')
 decoder_outputs = decoder_dense(decoder_outputs)
 
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
-model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, verbose=1, validation_split=0.2)
+model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS,
+          verbose=1, validation_split=0.2)
 
 json = model.to_json()
 open('models/eng-to-fra/eng-to-fra-word-architecture.json', 'w').write(json)
