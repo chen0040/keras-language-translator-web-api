@@ -55,7 +55,7 @@ class EngToFraCharTranslator(object):
         decoder_outputs = decoder_dense(decoder_outputs)
         self.decoder_model = Model([decoder_inputs] + decoder_state_inputs, [decoder_outputs] + decoder_states)
 
-    def translate(self, input_text):
+    def translate_lang(self, input_text):
         input_seq = np.zeros((1, self.max_encoder_seq_length, self.num_encoder_tokens))
         for char in input_text:
             if char in self.input_char2idx:
@@ -82,9 +82,9 @@ class EngToFraCharTranslator(object):
         return target_text
 
     def test_run(self):
-        print(self.translate('Be nice.'))
-        print(self.translate('Drop it!'))
-        print(self.translate('Get out!'))
+        print(self.translate_lang('Be nice.'))
+        print(self.translate_lang('Drop it!'))
+        print(self.translate_lang('Get out!'))
 
 
 if __name__ == '__main__':
