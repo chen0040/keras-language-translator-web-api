@@ -6,7 +6,7 @@ import numpy as np
 HIDDEN_UNITS = 256
 
 
-class EngToFraWordTranslator(object):
+class EngToCmnWordTranslator(object):
     model = None
     encoder_model = None
     decoder_model = None
@@ -20,11 +20,11 @@ class EngToFraWordTranslator(object):
     num_decoder_tokens = None
 
     def __init__(self):
-        self.input_word2idx = np.load('../translator_train/models/eng-to-fra/eng-to-fra-word-input-word2idx.npy').item()
-        self.input_idx2word = np.load('../translator_train/models/eng-to-fra/eng-to-fra-word-input-idx2word.npy').item()
-        self.target_word2idx = np.load('../translator_train/models/eng-to-fra/eng-to-fra-word-target-word2idx.npy').item()
-        self.target_idx2word = np.load('../translator_train/models/eng-to-fra/eng-to-fra-word-target-idx2word.npy').item()
-        context = np.load('../translator_train/models/eng-to-fra/eng-to-fra-word-context.npy').item()
+        self.input_word2idx = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-input-word2idx.npy').item()
+        self.input_idx2word = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-input-idx2word.npy').item()
+        self.target_word2idx = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-target-word2idx.npy').item()
+        self.target_idx2word = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-target-idx2word.npy').item()
+        context = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-context.npy').item()
         self.max_encoder_seq_length = context['max_encoder_seq_length']
         self.max_decoder_seq_length = context['max_decoder_seq_length']
         self.num_encoder_tokens = context['num_encoder_tokens']
@@ -45,9 +45,9 @@ class EngToFraWordTranslator(object):
 
         self.model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-        # model_json = open('../translator_train/models/eng-to-fra/eng-to-fra-word-architecture.json', 'r').read()
+        # model_json = open('../translator_train/models/eng-to-cmn/eng-to-cmn-word-architecture.json', 'r').read()
         # self.model = model_from_json(model_json)
-        self.model.load_weights('../translator_train/models/eng-to-fra/eng-to-fra-word-weights.h5')
+        self.model.load_weights('../translator_train/models/eng-to-cmn/eng-to-cmn-word-weights.h5')
         self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
         self.encoder_model = Model(encoder_inputs, encoder_states)
@@ -69,7 +69,7 @@ class EngToFraWordTranslator(object):
         input_seq.append(input_wids)
         input_seq = pad_sequences(input_seq, self.max_encoder_seq_length)
         states_value = self.encoder_model.predict(input_seq)
-        target_seq = [[self.target_word2idx['[START]']]]
+        target_seq = [[self.target_word2idx['\t']]]
         target_text = ''
         terminated = False
         while not terminated:
@@ -79,7 +79,7 @@ class EngToFraWordTranslator(object):
             sample_word = self.target_idx2word[sample_token_idx]
             target_text += sample_word
 
-            if sample_word == '[END]' or len(target_text) >= self.max_decoder_seq_length:
+            if sample_word == '\n' or len(target_text) >= self.max_decoder_seq_length:
                 terminated = True
 
             target_seq = [[sample_token_idx]]
@@ -93,5 +93,5 @@ class EngToFraWordTranslator(object):
 
 
 if __name__ == '__main__':
-    model = EngToFraWordTranslator()
+    model = EngToCmnWordTranslator()
     model.test_run()

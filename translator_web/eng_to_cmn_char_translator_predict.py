@@ -57,10 +57,10 @@ class EngToCmnCharTranslator(object):
 
     def translate_lang(self, input_text):
         input_seq = np.zeros((1, self.max_encoder_seq_length, self.num_encoder_tokens))
-        for char in input_text:
+        for idx, char in enumerate(input_text):
             if char in self.input_char2idx:
-                idx = self.input_char2idx[char]
-                input_seq[0, 0, idx] = 1
+                idx2 = self.input_char2idx[char]
+                input_seq[0, idx, idx2] = 1
         states_value = self.encoder_model.predict(input_seq)
         target_seq = np.zeros((1, 1, self.num_decoder_tokens))
         target_seq[0, 0, self.target_char2idx['\t']] = 1
@@ -84,7 +84,7 @@ class EngToCmnCharTranslator(object):
     def test_run(self):
         print(self.translate_lang('Be nice.'))
         print(self.translate_lang('Drop it!'))
-        print(self.translate_lang('Get out!'))
+        print(self.translate_lang('No way!'))
 
 
 if __name__ == '__main__':
