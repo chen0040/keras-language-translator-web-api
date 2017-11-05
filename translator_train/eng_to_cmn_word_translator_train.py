@@ -76,14 +76,12 @@ lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for lineIdx, line in enumerate(lines[: min(NUM_SAMPLES, len(lines)-1)]):
     input_text, target_text = line.split('\t')
     target_text = '\t' + target_text + '\n'
-    target_words = [w.lower() for w in nltk.word_tokenize(target_text, language='french')]
-    for idx, w in enumerate(target_words):
-        w2idx = 0  # default [UNK]
-        if w in target_word2idx:
-            w2idx = target_word2idx[w]
-        decoder_input_data[lineIdx, idx, w2idx] = 1
-        if idx > 0:
-            decoder_target_data[lineIdx, idx-1, w2idx] = 1
+    for idx, char in enumerate(target_text):
+        if char in target_word2idx:
+            w2idx = target_word2idx[char]
+            decoder_input_data[lineIdx, idx, w2idx] = 1
+            if idx > 0:
+                decoder_target_data[lineIdx, idx-1, w2idx] = 1
 
 context = dict()
 context['num_encoder_tokens'] = num_encoder_tokens
