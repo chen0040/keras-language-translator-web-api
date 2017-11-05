@@ -7,7 +7,7 @@ BATCH_SIZE = 64
 NUM_EPOCHS = 100
 HIDDEN_UNITS = 256
 NUM_SAMPLES = 10000
-DATA_PATH = 'data/fra.txt'
+DATA_PATH = 'data/cmn.txt'
 
 input_texts = []
 target_texts = []
@@ -40,10 +40,10 @@ input_idx2char = dict([(i, char) for i, char in enumerate(input_characters)])
 target_char2idx = dict([(char, i) for i, char in enumerate(target_characters)])
 target_idx2char = dict([(i, char) for i, char in enumerate(target_characters)])
 
-np.save('models/eng-to-fra/eng-to-fra-char-input-char2idx.npy', input_char2idx)
-np.save('models/eng-to-fra/eng-to-fra-char-target-char2idx.npy', target_char2idx)
-np.save('models/eng-to-fra/eng-to-fra-char-input-idx2char.npy', input_idx2char)
-np.save('models/eng-to-fra/eng-to-fra-char-target-idx2char.npy', target_idx2char)
+np.save('models/eng-to-cmn/eng-to-cmn-char-input-char2idx.npy', input_char2idx)
+np.save('models/eng-to-cmn/eng-to-cmn-char-target-char2idx.npy', target_char2idx)
+np.save('models/eng-to-cmn/eng-to-cmn-char-input-idx2char.npy', input_idx2char)
+np.save('models/eng-to-cmn/eng-to-cmn-char-target-idx2char.npy', target_idx2char)
 
 context = dict()
 context['max_encoder_seq_length'] = max_encoder_seq_length
@@ -51,7 +51,7 @@ context['max_decoder_seq_length'] = max_decoder_seq_length
 context['num_encoder_tokens'] = num_encoder_tokens
 context['num_decoder_tokens'] = num_decoder_tokens
 
-np.save('models/eng-to-fra/eng-to-fra-char-context.npy', context)
+np.save('models/eng-to-cmn/eng-to-cmn-char-context.npy', context)
 
 encoder_input_data = np.zeros((len(input_texts), max_encoder_seq_length, num_encoder_tokens), dtype='float32')
 decoder_input_data = np.zeros((len(input_texts), max_decoder_seq_length, num_decoder_tokens), dtype='float32')
@@ -83,8 +83,8 @@ model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, validation_split=0.2)
 
 json = model.to_json()
-open('models/eng-to-fra/eng-to-fra-char-architecture.json', 'w').write(json)
-model.save_weights('models/eng-to-fra/eng-to-fra-char-weights.h5')
+open('models/eng-to-cmn/eng-to-cmn-char-architecture.json', 'w').write(json)
+model.save_weights('models/eng-to-cmn/eng-to-cmn-char-weights.h5')
 
 
 

@@ -19,11 +19,11 @@ class EngToFraCharTranslator(object):
     num_decoder_tokens = None
 
     def __init__(self):
-        self.input_char2idx = np.load('../translator_train/models/eng-to-fra/eng-to-fra-char-input-char2idx.npy').item()
-        self.input_idx2char = np.load('../translator_train/models/eng-to-fra/eng-to-fra-char-input-idx2char.npy').item()
-        self.target_char2idx = np.load('../translator_train/models/eng-to-fra/eng-to-fra-char-target-char2idx.npy').item()
-        self.target_idx2char = np.load('../translator_train/models/eng-to-fra/eng-to-fra-char-target-idx2char.npy').item()
-        context = np.load('../translator_train/models/eng-to-fra/eng-to-fra-char-context.npy').item()
+        self.input_char2idx = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-char-input-char2idx.npy').item()
+        self.input_idx2char = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-char-input-idx2char.npy').item()
+        self.target_char2idx = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-char-target-char2idx.npy').item()
+        self.target_idx2char = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-char-target-idx2char.npy').item()
+        context = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-char-context.npy').item()
         self.max_encoder_seq_length = context['max_encoder_seq_length']
         self.max_decoder_seq_length = context['max_decoder_seq_length']
         self.num_encoder_tokens = context['num_encoder_tokens']
@@ -42,9 +42,9 @@ class EngToFraCharTranslator(object):
 
         self.model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-        # model_json = open('../translator_train/models/eng-to-fra/eng-to-fra-char-architecture.json', 'r').read()
+        # model_json = open('../translator_train/models/eng-to-cmn/eng-to-cmn-char-architecture.json', 'r').read()
         # self.model = model_from_json(model_json)
-        self.model.load_weights('../translator_train/models/eng-to-fra/eng-to-fra-char-weights.h5')
+        self.model.load_weights('../translator_train/models/eng-to-cmn/eng-to-cmn-char-weights.h5')
         self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
         self.encoder_model = Model(encoder_inputs, encoder_states)

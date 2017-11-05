@@ -11,13 +11,13 @@ class WordVecLstmSoftmax(object):
     context = None
 
     def __init__(self):
-        json = open('../translator_train/models/lstm_softmax_architecture.json', 'r').read()
+        json = open('../translator_train/models/eng-to-fra/lstm_softmax_architecture.json', 'r').read()
         self.model = model_from_json(json)
-        self.model.load_weights('../translator_train/models/lstm_softmax_weights.h5')
+        self.model.load_weights('../translator_train/models/eng-to-fra/lstm_softmax_weights.h5')
         self.model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-        self.word2idx = np.load('../translator_train/models/umich_idx2word_lstm.npy').item()
-        self.idx2word = np.load('../translator_train/models/umich_word2idx_lstm.npy').item()
-        self.context = np.load('../translator_train/models/umich_context_lstm.npy').item()
+        self.word2idx = np.load('../translator_train/models/eng-to-fra/umich_idx2word_lstm.npy').item()
+        self.idx2word = np.load('../translator_train/models/eng-to-fra/umich_word2idx_lstm.npy').item()
+        self.context = np.load('../translator_train/models/eng-to-fra/umich_context_lstm.npy').item()
 
     def predict(self, sentence):
         xs = []
