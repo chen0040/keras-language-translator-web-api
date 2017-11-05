@@ -52,8 +52,6 @@ np.save('models/eng-to-fra/eng-to-fra-word-target-word2idx.npy', target_word2idx
 np.save('models/eng-to-fra/eng-to-fra-word-target-idx2word.npy', target_idx2word)
 
 encoder_input_data = []
-decoder_input_data = []
-decoder_target_data = []
 
 encoder_max_seq_length = 0
 decoder_max_seq_length = 0
@@ -65,10 +63,8 @@ for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_words = [w.lower() for w in nltk.word_tokenize(input_text)]
     target_words = [w.lower() for w in nltk.word_tokenize(target_text, language='french')]
     encoder_input_wids = []
-    decoder_input_wids = []
-    decoder_target_wids = []
     for w in input_words:
-        w2idx = 1
+        w2idx = 1  # default [UNK]
         if w in input_word2idx:
             w2idx = input_word2idx[w]
         encoder_input_wids.append(w2idx)
@@ -76,19 +72,27 @@ for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
         w2idx = 2
         if w in target_word2idx:
             w2idx = target_word2idx[w]
-        decoder_input_wids.append(w2idx)
-        if idx > 0:
-            decoder_target_wids.append(w2idx)
+
     encoder_input_data.append(encoder_input_wids)
-    decoder_input_data.append(decoder_input_wids)
-    decoder_target_data.append(decoder_target_wids)
     encoder_max_seq_length = max(len(encoder_input_wids), encoder_max_seq_length)
-    decoder_max_seq_length = max(len(decoder_input_wids), decoder_max_seq_length)
+    decoder_max_seq_length = max(len(target_words), decoder_max_seq_length)
 
 encoder_input_data = pad_sequences(encoder_input_data, encoder_max_seq_length)
-decoder_input_data = pad_sequences(decoder_input_data, decoder_max_seq_length)
-decoder_target_data = np.array(decoder_target_data)
 
+decoder_target_data = np.zeros(shape=(NUM_SAMPLES, decoder_max_seq_length, num_decoder_tokens))
+decoder_input_data = np.zeros(shape=(NUM_SAMPLES, decoder_max_seq_length, num_decoder_tokens))
+lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
+for lineIdx, line in enumerate(lines[: min(NUM_SAMPLES, len(lines)-1)]):
+    input_text, target_text = line.split('\t')
+    target_text = '[START] ' + target_text + ' [END]'
+    target_words = [w.lower() for w in nltk.word_tokenize(target_text, language='french')]
+    for idx, w in enumerate(target_words):
+        w2idx = 2  # default [UNK]
+        if w in target_word2idx:
+            w2idx = target_word2idx[w]
+        decoder_input_data[lineIdx, idx, w2idx] = 1
+        if idx > 0:
+            decoder_target_data[lineIdx, idx-1, w2idx] = 1
 
 context = dict()
 context['num_encoder_tokens'] = num_encoder_tokens
@@ -98,18 +102,16 @@ context['decoder_max_seq_length'] = decoder_max_seq_length
 
 np.save('models/eng-to-fra/eng-to-fra-word-context.npy', context)
 
-encoder_inputs = Input(shape=(None, encoder_max_seq_length), name='encoder_inputs')
+encoder_inputs = Input(shape=(None, ), name='encoder_inputs')
 encoder_embedding = Embedding(input_dim=num_encoder_tokens, output_dim=HIDDEN_UNITS,
                               input_length=encoder_max_seq_length, name='encoder_embedding')
 encoder_lstm = LSTM(units=HIDDEN_UNITS, return_state=True, name='encoder_lstm')
 encoder_outputs, encoder_state_h, encoder_state_c = encoder_lstm(encoder_embedding(encoder_inputs))
 encoder_states = [encoder_state_h, encoder_state_c]
 
-decoder_inputs = Input(shape=(None, decoder_max_seq_length), name='decoder_inputs')
-decoder_embedding = Embedding(input_dim=num_decoder_tokens, output_dim=HIDDEN_UNITS,
-                              input_length=decoder_max_seq_length, name='decoder_embedding')
+decoder_inputs = Input(shape=(None, num_decoder_tokens), name='decoder_inputs')
 decoder_lstm = LSTM(units=HIDDEN_UNITS, return_state=True, return_sequences=True, name='decoder_lstm')
-decoder_outputs, decoder_state_h, decoder_state_c = decoder_lstm(decoder_embedding(decoder_inputs),
+decoder_outputs, decoder_state_h, decoder_state_c = decoder_lstm(decoder_inputs,
                                                                  initial_state=encoder_states)
 decoder_dense = Dense(units=num_decoder_tokens, activation='softmax', name='decoder_dense')
 decoder_outputs = decoder_dense(decoder_outputs)

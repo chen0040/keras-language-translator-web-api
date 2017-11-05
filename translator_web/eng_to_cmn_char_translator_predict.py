@@ -5,7 +5,7 @@ import numpy as np
 HIDDEN_UNITS = 256
 
 
-class EngToFraCharTranslator(object):
+class EngToCmnCharTranslator(object):
     model = None
     encoder_model = None
     decoder_model = None
@@ -88,5 +88,5 @@ class EngToFraCharTranslator(object):
 
 
 if __name__ == '__main__':
-    model = EngToFraCharTranslator()
+    model = EngToCmnCharTranslator()
     model.test_run()
