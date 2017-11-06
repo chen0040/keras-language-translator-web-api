@@ -25,8 +25,8 @@ class EngToCmnWordTranslator(object):
         self.target_word2idx = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-target-word2idx.npy').item()
         self.target_idx2word = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-target-idx2word.npy').item()
         context = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-word-context.npy').item()
-        self.max_encoder_seq_length = context['max_encoder_seq_length']
-        self.max_decoder_seq_length = context['max_decoder_seq_length']
+        self.max_encoder_seq_length = context['encoder_max_seq_length']
+        self.max_decoder_seq_length = context['decoder_max_seq_length']
         self.num_encoder_tokens = context['num_encoder_tokens']
         self.num_decoder_tokens = context['num_decoder_tokens']
 
@@ -62,14 +62,15 @@ class EngToCmnWordTranslator(object):
         input_seq = []
         input_wids = []
         for word in input_text:
-            idx = 1
+            idx = 1  # default [UNK]
             if word in self.input_word2idx:
                 idx = self.input_word2idx[word]
             input_wids.append(idx)
         input_seq.append(input_wids)
         input_seq = pad_sequences(input_seq, self.max_encoder_seq_length)
         states_value = self.encoder_model.predict(input_seq)
-        target_seq = [[self.target_word2idx['\t']]]
+        target_seq = np.zeros((1, 1, self.num_decoder_tokens))
+        target_seq[0, 0, self.target_word2idx['\t']] = 1
         target_text = ''
         terminated = False
         while not terminated:
@@ -82,7 +83,9 @@ class EngToCmnWordTranslator(object):
             if sample_word == '\n' or len(target_text) >= self.max_decoder_seq_length:
                 terminated = True
 
-            target_seq = [[sample_token_idx]]
+            target_seq = np.zeros((1, 1, self.num_decoder_tokens))
+            target_seq[0, 0, sample_token_idx] = 1
+
             states_value = [h, c]
         return target_text
 

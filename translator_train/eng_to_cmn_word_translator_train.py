@@ -10,7 +10,7 @@ BATCH_SIZE = 64
 NUM_EPOCHS = 100
 HIDDEN_UNITS = 256
 NUM_SAMPLES = 10000
-MAX_VOCAB_SIZE = 4000
+MAX_VOCAB_SIZE = 10000
 DATA_PATH = 'data/cmn.txt'
 
 input_counter = Counter()
@@ -36,8 +36,8 @@ for idx, word in enumerate(target_counter.most_common(MAX_VOCAB_SIZE)):
 input_word2idx['[PAD]'] = 0
 input_word2idx['[UNK]'] = 1
 
-input_idx2word = {(idx, word) for word, idx in input_word2idx.items()}
-target_idx2word = {(idx, word) for word, idx in target_word2idx.items()}
+input_idx2word = dict([(idx, word) for word, idx in input_word2idx.items()])
+target_idx2word = dict([(idx, word) for word, idx in target_word2idx.items()])
 
 num_encoder_tokens = len(input_idx2word)
 num_decoder_tokens = len(target_idx2word)

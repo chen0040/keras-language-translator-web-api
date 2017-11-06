@@ -14,6 +14,10 @@ Run the following command to install the keras, flask and other dependency modul
 sudo pip install -r requirements.txt
 ```
 
+The translator models are chained using eng-to-french and eng-to-chinese data set and are available in the 
+translator_train/models directory. During runtime, the flask app will load these trained models to perform the 
+translation
+
 Goto translator_web directory and run the following command:
 
 ```bash
