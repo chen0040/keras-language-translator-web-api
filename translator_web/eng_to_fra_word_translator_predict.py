@@ -2,6 +2,7 @@ from keras.models import Model, model_from_json
 from keras.layers import Input, LSTM, Dense, Embedding
 from keras.preprocessing.sequence import pad_sequences
 import numpy as np
+import nltk
 
 HIDDEN_UNITS = 256
 
@@ -62,7 +63,7 @@ class EngToFraWordTranslator(object):
     def translate_lang(self, input_text):
         input_seq = []
         input_wids = []
-        for word in input_text:
+        for word in nltk.word_tokenize(input_text.lower()):
             idx = 1
             if word in self.input_word2idx:
                 idx = self.input_word2idx[word]

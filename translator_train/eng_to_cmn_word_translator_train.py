@@ -19,7 +19,7 @@ target_counter = Counter()
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_text, target_text = line.split('\t')
-    input_words = [w.lower() for w in nltk.word_tokenize(input_text)]
+    input_words = [w for w in nltk.word_tokenize(input_text.lower())]
     target_text = '\t' + target_text + '\n'
     for w in input_words:
         input_counter[w] += 1
@@ -56,7 +56,7 @@ lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_text, target_text = line.split('\t')
     target_text = '\t' + target_text + '\n'
-    input_words = [w.lower() for w in nltk.word_tokenize(input_text)]
+    input_words = [w for w in nltk.word_tokenize(input_text.lower())]
     encoder_input_wids = []
     for w in input_words:
         w2idx = 1  # default [UNK]
@@ -74,7 +74,7 @@ decoder_target_data = np.zeros(shape=(NUM_SAMPLES, decoder_max_seq_length, num_d
 decoder_input_data = np.zeros(shape=(NUM_SAMPLES, decoder_max_seq_length, num_decoder_tokens))
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for lineIdx, line in enumerate(lines[: min(NUM_SAMPLES, len(lines)-1)]):
-    input_text, target_text = line.split('\t')
+    _, target_text = line.split('\t')
     target_text = '\t' + target_text + '\n'
     for idx, char in enumerate(target_text):
         if char in target_word2idx:

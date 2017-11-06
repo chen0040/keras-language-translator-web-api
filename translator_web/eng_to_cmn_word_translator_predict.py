@@ -1,6 +1,7 @@
 from keras.models import Model, model_from_json
 from keras.layers import Input, LSTM, Dense, Embedding
 from keras.preprocessing.sequence import pad_sequences
+import nltk
 import numpy as np
 
 HIDDEN_UNITS = 256
@@ -61,7 +62,7 @@ class EngToCmnWordTranslator(object):
     def translate_lang(self, input_text):
         input_seq = []
         input_wids = []
-        for word in input_text:
+        for word in nltk.word_tokenize(input_text.lower()):
             idx = 1  # default [UNK]
             if word in self.input_word2idx:
                 idx = self.input_word2idx[word]

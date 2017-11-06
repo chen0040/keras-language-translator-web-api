@@ -19,9 +19,9 @@ target_counter = Counter()
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_text, target_text = line.split('\t')
-    input_words = [w.lower() for w in nltk.word_tokenize(input_text)]
-    target_text = '[START] ' + target_text + ' [END]'
-    target_words = [w.lower() for w in nltk.word_tokenize(target_text)]
+    input_words = [w for w in nltk.word_tokenize(input_text.lower())]
+    target_text = '[START] ' + target_text.lower() + ' [END]'
+    target_words = [w for w in nltk.word_tokenize(target_text)]
     for w in input_words:
         input_counter[w] += 1
     for w in target_words:
@@ -57,9 +57,9 @@ decoder_max_seq_length = 0
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_text, target_text = line.split('\t')
-    target_text = '[START] ' + target_text + ' [END]'
-    input_words = [w.lower() for w in nltk.word_tokenize(input_text)]
-    target_words = [w.lower() for w in nltk.word_tokenize(target_text)]
+    target_text = '[START] ' + target_text.lower() + ' [END]'
+    input_words = [w for w in nltk.word_tokenize(input_text.lower())]
+    target_words = [w for w in nltk.word_tokenize(target_text)]
     encoder_input_wids = []
     for w in input_words:
         w2idx = 1  # default [UNK]
@@ -77,9 +77,9 @@ decoder_target_data = np.zeros(shape=(NUM_SAMPLES, decoder_max_seq_length, num_d
 decoder_input_data = np.zeros(shape=(NUM_SAMPLES, decoder_max_seq_length, num_decoder_tokens))
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for lineIdx, line in enumerate(lines[: min(NUM_SAMPLES, len(lines)-1)]):
-    input_text, target_text = line.split('\t')
-    target_text = '[START] ' + target_text + ' [END]'
-    target_words = [w.lower() for w in nltk.word_tokenize(target_text)]
+    _, target_text = line.split('\t')
+    target_text = '[START] ' + target_text.lower() + ' [END]'
+    target_words = [w for w in nltk.word_tokenize(target_text)]
     for idx, w in enumerate(target_words):
         w2idx = 0  # default [UNK]
         if w in target_word2idx:
