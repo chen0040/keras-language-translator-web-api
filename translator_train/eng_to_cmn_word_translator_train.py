@@ -33,8 +33,8 @@ for idx, word in enumerate(input_counter.most_common(MAX_VOCAB_SIZE)):
 for idx, word in enumerate(target_counter.most_common(MAX_VOCAB_SIZE)):
     target_word2idx[word[0]] = idx
 
-input_word2idx['[PAD]'] = 0
-input_word2idx['[UNK]'] = 1
+input_word2idx['PAD'] = 0
+input_word2idx['UNK'] = 1
 
 input_idx2word = dict([(idx, word) for word, idx in input_word2idx.items()])
 target_idx2word = dict([(idx, word) for word, idx in target_word2idx.items()])

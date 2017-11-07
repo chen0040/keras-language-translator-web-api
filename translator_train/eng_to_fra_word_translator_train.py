@@ -20,7 +20,7 @@ lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_text, target_text = line.split('\t')
     input_words = [w for w in nltk.word_tokenize(input_text.lower())]
-    target_text = '[START] ' + target_text.lower() + ' [END]'
+    target_text = 'START ' + target_text.lower() + ' END'
     target_words = [w for w in nltk.word_tokenize(target_text)]
     for w in input_words:
         input_counter[w] += 1
@@ -34,9 +34,9 @@ for idx, word in enumerate(input_counter.most_common(MAX_VOCAB_SIZE)):
 for idx, word in enumerate(target_counter.most_common(MAX_VOCAB_SIZE)):
     target_word2idx[word[0]] = idx + 1
 
-input_word2idx['[PAD]'] = 0
-input_word2idx['[UNK]'] = 1
-target_word2idx['[UNK]'] = 0
+input_word2idx['PAD'] = 0
+input_word2idx['UNK'] = 1
+target_word2idx['UNK'] = 0
 
 input_idx2word = dict([(idx, word) for word, idx in input_word2idx.items()])
 target_idx2word = dict([(idx, word) for word, idx in target_word2idx.items()])
@@ -57,7 +57,7 @@ decoder_max_seq_length = 0
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_text, target_text = line.split('\t')
-    target_text = '[START] ' + target_text.lower() + ' [END]'
+    target_text = 'START ' + target_text.lower() + ' END'
     input_words = [w for w in nltk.word_tokenize(input_text.lower())]
     target_words = [w for w in nltk.word_tokenize(target_text)]
     encoder_input_wids = []
@@ -78,7 +78,7 @@ decoder_input_data = np.zeros(shape=(NUM_SAMPLES, decoder_max_seq_length, num_de
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for lineIdx, line in enumerate(lines[: min(NUM_SAMPLES, len(lines)-1)]):
     _, target_text = line.split('\t')
-    target_text = '[START] ' + target_text.lower() + ' [END]'
+    target_text = 'START ' + target_text.lower() + ' END'
     target_words = [w for w in nltk.word_tokenize(target_text)]
     for idx, w in enumerate(target_words):
         w2idx = 0  # default [UNK]

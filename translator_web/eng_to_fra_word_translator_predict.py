@@ -72,24 +72,26 @@ class EngToFraWordTranslator(object):
         input_seq = pad_sequences(input_seq, self.max_encoder_seq_length)
         states_value = self.encoder_model.predict(input_seq)
         target_seq = np.zeros((1, 1, self.num_decoder_tokens))
-        target_seq[0, 0, self.target_word2idx['[START]']] = 1
+        target_seq[0, 0, self.target_word2idx['START']] = 1
         target_text = ''
         terminated = False
+        target_text_len = 0
         while not terminated:
             output_tokens, h, c = self.decoder_model.predict([target_seq] + states_value)
 
             sample_token_idx = np.argmax(output_tokens[0, -1, :])
             sample_word = self.target_idx2word[sample_token_idx]
-            target_text += sample_word
+            target_text += ' ' + sample_word
+            target_text_len += 1
 
-            if sample_word == '[END]' or len(target_text) >= self.max_decoder_seq_length:
+            if sample_word == 'END' or target_text_len >= self.max_decoder_seq_length:
                 terminated = True
 
             target_seq = np.zeros((1, 1, self.num_decoder_tokens))
-            target_seq[0, 0, self.target_word2idx['[START]']] = 1
+            target_seq[0, 0, sample_token_idx] = 1
 
             states_value = [h, c]
-        return target_text
+        return target_text.trim()
 
     def test_run(self):
         print(self.translate_lang('Be nice.'))
