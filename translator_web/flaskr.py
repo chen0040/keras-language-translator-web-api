@@ -102,7 +102,7 @@ def eng_to_cmn_word_translator():
     return render_template('eng_to_cmn_word_translator.html')
 
 
-@app.route('/translate_eng', method=['POST', 'GET'])
+@app.route('/translate_eng', methods=['POST', 'GET'])
 def translate_eng():
     if request.method == 'POST':
         if not request.json or 'sentence' not in request.json or 'level' not in request.json or 'target_lang' not in request.json:
