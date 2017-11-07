@@ -62,7 +62,7 @@ def eng_to_cmn_char_translator():
             redirect(request.url)
         else:
             sent = request.form['sentence']
-            translated = eng_to_fra_translator_c.translate_lang(sent)
+            translated = eng_to_cmn_translator_c.translate_lang(sent)
             return render_template('eng_to_cmn_char_translator_result.html', sentence=sent,
                                    translated=translated)
     return render_template('eng_to_cmn_char_translator.html')

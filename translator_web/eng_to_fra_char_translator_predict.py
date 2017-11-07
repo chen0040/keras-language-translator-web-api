@@ -79,7 +79,7 @@ class EngToFraCharTranslator(object):
             target_seq = np.zeros((1, 1, self.num_decoder_tokens))
             target_seq[0, 0, sample_token_idx] = 1
             states_value = [h, c]
-        return target_text
+        return target_text.strip()
 
     def test_run(self):
         print(self.translate_lang('Be nice.'))

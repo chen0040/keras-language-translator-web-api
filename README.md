@@ -30,3 +30,45 @@ trained seq2seq models:
 * Character-level seq2seq models
 * Word-level seq2seq models
 
+To translate an english sentence to other languages using web api, after the flask server is started, run the following curl POST query
+in your terminal:
+
+```bash
+curl -H 'Content-Type application/json' -X POST -d '{"level":"level_type", "sentence":"your_sentence_here", "target_lang":"target_language"}' http://localhost:5000/translate_eng
+```
+
+The level_type can be "char" or "word", the target_lang can be "chinese" or "french"
+
+(Note that same results can be obtained by running a curl GET query to http://localhost:5000/translate_eng?sentence=your_sentence_here&level=level_type&target_lang=target_language)
+
+For example, you can get the sentiments for the sentence "i like the Da Vinci Code a lot." by running the following command:
+
+```bash
+curl -H 'Content-Type: application/json' -X POST -d '{"level":"word", "sentence":"Be nice.", "target_lang":"chinese"}' http://localhost:5000/translate_eng
+```
+
+And the following will be the json response:
+
+```json
+{
+    "level": "word",
+    "sentence": "Be nice.",
+    "target_lang": "chinese",
+    "translated": "和气点。"
+}
+```
+
+Here are some examples to query sentiments using some other neural network models:
+
+```bash
+curl -H 'Content-Type: application/json' -X POST -d '{"level":"char", "sentence":"Be nice.", "target_lang":"chinese"}' http://localhost:5000/translate_eng
+curl -H 'Content-Type: application/json' -X POST -d '{"level":"word", "sentence":"Be nice.", "target_lang":"french"}' http://localhost:5000/translate_eng
+curl -H 'Content-Type: application/json' -X POST -d '{"level":"char", "sentence":"Be nice.", "target_lang":"french"}' http://localhost:5000/translate_eng
+```
+
+
+
+
+
+
+
