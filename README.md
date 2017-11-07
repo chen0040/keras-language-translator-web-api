@@ -41,7 +41,7 @@ The level_type can be "char" or "word", the target_lang can be "chinese" or "fre
 
 (Note that same results can be obtained by running a curl GET query to http://localhost:5000/translate_eng?sentence=your_sentence_here&level=level_type&target_lang=target_language)
 
-For example, you can get the sentiments for the sentence "i like the Da Vinci Code a lot." by running the following command:
+For example, you can translate the sentence "Be nice." by running the following command:
 
 ```bash
 curl -H 'Content-Type: application/json' -X POST -d '{"level":"word", "sentence":"Be nice.", "target_lang":"chinese"}' http://localhost:5000/translate_eng
@@ -58,7 +58,7 @@ And the following will be the json response:
 }
 ```
 
-Here are some examples to query sentiments using some other neural network models:
+Here are some examples for eng translation using some other configuration options:
 
 ```bash
 curl -H 'Content-Type: application/json' -X POST -d '{"level":"char", "sentence":"Be nice.", "target_lang":"chinese"}' http://localhost:5000/translate_eng
