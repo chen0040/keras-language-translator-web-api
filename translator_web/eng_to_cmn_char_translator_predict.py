@@ -87,6 +87,9 @@ class EngToCmnCharTranslator(object):
         print(self.translate_lang('No way!'))
 
 
-if __name__ == '__main__':
+def main():
     model = EngToCmnCharTranslator()
     model.test_run()
+
+if __name__ == '__main__':
+    main()

@@ -87,6 +87,9 @@ class EngToFraCharTranslator(object):
         print(self.translate_lang('Get out!'))
 
 
-if __name__ == '__main__':
+def main():
     model = EngToFraCharTranslator()
     model.test_run()
+
+if __name__ == '__main__':
+    main()

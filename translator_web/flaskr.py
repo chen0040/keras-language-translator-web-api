@@ -13,16 +13,9 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 eng_to_fra_translator_c = EngToFraCharTranslator()
-eng_to_fra_translator_c.test_run()
-
 eng_to_cmn_translator_c = EngToCmnCharTranslator()
-eng_to_cmn_translator_c.test_run()
-
 eng_to_fra_translator_w = EngToFraWordTranslator()
-eng_to_fra_translator_w.test_run()
-
 eng_to_cmn_translator_w = EngToCmnWordTranslator()
-eng_to_cmn_translator_w.test_run()
 
 
 @app.route('/')
@@ -137,5 +130,12 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-if __name__ == '__main__':
+def main():
+    eng_to_fra_translator_c.test_run()
+    eng_to_cmn_translator_c.test_run()
+    eng_to_fra_translator_w.test_run()
+    eng_to_cmn_translator_w.test_run()
     app.run(debug=True)
+
+if __name__ == '__main__':
+    main()
