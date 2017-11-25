@@ -2,12 +2,15 @@ from __future__ import print_function
 from keras.models import Model
 from keras.layers import Input, LSTM, Dense
 import numpy as np
+from keras.callbacks import ModelCheckpoint
 
 BATCH_SIZE = 64
 NUM_EPOCHS = 100
 HIDDEN_UNITS = 256
 NUM_SAMPLES = 10000
 DATA_PATH = 'data/cmn.txt'
+WEIGHT_FILE_PATH = 'models/eng-to-cmn/eng-to-cmn-char-weights.h5'
+ARCHITECTURE_FILE_PATH = 'models/eng-to-cmn/eng-to-cmn-char-architecture.json'
 
 input_texts = []
 target_texts = []
@@ -78,13 +81,16 @@ decoder_dense = Dense(num_decoder_tokens, activation='softmax', name='decoder_de
 decoder_outputs = decoder_dense(decoder_outputs)
 
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
+json = model.to_json()
+open(ARCHITECTURE_FILE_PATH, 'w').write(json)
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
-model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, validation_split=0.2)
+checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE_PATH, save_best_only=True)
+model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS,
+          validation_split=0.2, callbacks=[checkpoint])
 
-json = model.to_json()
-open('models/eng-to-cmn/eng-to-cmn-char-architecture.json', 'w').write(json)
-model.save_weights('models/eng-to-cmn/eng-to-cmn-char-weights.h5')
+
+model.save_weights(WEIGHT_FILE_PATH)
 
 
 

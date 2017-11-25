@@ -1,4 +1,5 @@
 from keras.models import Model
+from keras.callbacks import ModelCheckpoint
 from keras.layers.recurrent import LSTM
 from keras.layers import Dense, Input, Embedding
 from keras.preprocessing.sequence import pad_sequences
@@ -17,6 +18,8 @@ NUM_SAMPLES = 10000
 MAX_VOCAB_SIZE = 10000
 GLOVE_EMBEDDING_SIZE = 100
 DATA_PATH = 'data/fra.txt'
+WEIGHT_FILE_PATH = 'models/eng-to-fra/eng-to-fra-glove-weights.h5'
+ARCHITECTURE_FILE_PATH = 'models/eng-to-fra/eng-to-fra-glove-architecture.json'
 
 target_counter = Counter()
 
@@ -165,12 +168,13 @@ decoder_outputs = decoder_dense(decoder_outputs)
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE_PATH, save_best_only=True)
 model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS,
-          verbose=1, validation_split=0.2)
+          verbose=1, validation_split=0.2, callbacks=[checkpoint])
 
 json = model.to_json()
-open('models/eng-to-fra/eng-to-fra-glove-architecture.json', 'w').write(json)
-model.save_weights('models/eng-to-fra/eng-to-fra-glove-weights.h5')
+open(ARCHITECTURE_FILE_PATH, 'w').write(json)
+model.save_weights(WEIGHT_FILE_PATH)
 
 
 

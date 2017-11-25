@@ -2,12 +2,15 @@ from __future__ import print_function
 from keras.models import Model
 from keras.layers import Input, LSTM, Dense
 import numpy as np
+from keras.callbacks import ModelCheckpoint
 
 BATCH_SIZE = 64
 NUM_EPOCHS = 100
 HIDDEN_UNITS = 256
 NUM_SAMPLES = 10000
 DATA_PATH = 'data/fra.txt'
+WEIGHT_FILE_PATH = 'models/eng-to-fra/eng-to-fra-char-weights.h5'
+ARCHITECTURE_FILE_PATH = 'models/eng-to-fra/eng-to-fra-char-architecture.json'
 
 input_texts = []
 target_texts = []
@@ -80,11 +83,13 @@ decoder_outputs = decoder_dense(decoder_outputs)
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
-model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS, validation_split=0.2)
+checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE_PATH, save_best_only=True)
+model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS,
+          validation_split=0.2, callbacks=[checkpoint])
 
 json = model.to_json()
-open('models/eng-to-fra/eng-to-fra-char-architecture.json', 'w').write(json)
-model.save_weights('models/eng-to-fra/eng-to-fra-char-weights.h5')
+open(ARCHITECTURE_FILE_PATH, 'w').write(json)
+model.save_weights(WEIGHT_FILE_PATH)
 
 
 
