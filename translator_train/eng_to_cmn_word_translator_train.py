@@ -14,7 +14,7 @@ NUM_SAMPLES = 10000
 MAX_VOCAB_SIZE = 10000
 DATA_PATH = 'data/cmn.txt'
 WEIGHT_FILE_PATH = 'models/eng-to-cmn/eng-to-cmn-word-weights.h5'
-ARHICTECTURE_FILE_PATH = 'models/eng-to-cmn/eng-to-cmn-word-architecture.json'
+ARCHITECTURE_FILE_PATH = 'models/eng-to-cmn/eng-to-cmn-word-architecture.json'
 
 input_counter = Counter()
 target_counter = Counter()
@@ -111,12 +111,15 @@ decoder_outputs = decoder_dense(decoder_outputs)
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+
+
+json = model.to_json()
+open(ARCHITECTURE_FILE_PATH, 'w').write(json)
+
 checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE_PATH, save_best_only=True)
 model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS,
           verbose=1, validation_split=0.2, callbacks=[checkpoint])
 
-json = model.to_json()
-open(ARCHITECTURE_FILE_PATH, 'w').write(json)
 model.save_weights(WEIGHT_FILE_PATH)
 
 

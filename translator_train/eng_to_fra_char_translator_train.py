@@ -83,12 +83,14 @@ decoder_outputs = decoder_dense(decoder_outputs)
 model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
+
+json = model.to_json()
+open(ARCHITECTURE_FILE_PATH, 'w').write(json)
+
 checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE_PATH, save_best_only=True)
 model.fit([encoder_input_data, decoder_input_data], decoder_target_data, batch_size=BATCH_SIZE, epochs=NUM_EPOCHS,
           validation_split=0.2, callbacks=[checkpoint])
 
-json = model.to_json()
-open(ARCHITECTURE_FILE_PATH, 'w').write(json)
 model.save_weights(WEIGHT_FILE_PATH)
 
 
