@@ -11,8 +11,8 @@ __pycache__/
 
 Thumbs.db
 
-translator-web/uploads
-translator-train/very_large_data
+translator_web/uploads
+translator_train/very_large_data
 
 # Distribution / packaging
 .Python

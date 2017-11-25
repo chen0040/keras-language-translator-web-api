@@ -78,8 +78,6 @@ def load_glove():
 
 word2em = load_glove()
 
-input_texts_word2em = []
-
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:
     input_text, target_text = line.split('\t')
@@ -99,12 +97,14 @@ num_decoder_tokens = len(target_idx2word)
 np.save('models/eng-to-cmn/eng-to-cmn-glove-target-word2idx.npy', target_word2idx)
 np.save('models/eng-to-cmn/eng-to-cmn-glove-target-idx2word.npy', target_idx2word)
 
-unknown_emb = np.random.randn(1, GLOVE_EMBEDDING_SIZE)
+unknown_emb = np.random.randn(GLOVE_EMBEDDING_SIZE)
 
 np.save('models/eng-to-cmn/eng-to-cmn-glove-unknown-emb.npy', unknown_emb)
 
 encoder_max_seq_length = 0
 decoder_max_seq_length = 0
+
+input_texts_word2em = []
 
 lines = open(DATA_PATH, 'rt', encoding='utf8').read().split('\n')
 for line in lines[: min(NUM_SAMPLES, len(lines)-1)]:

@@ -156,7 +156,7 @@ class EngToCmnGloveTranslator(object):
 
 
 def main():
-    model = EngToCmnWordTranslator()
+    model = EngToCmnGloveTranslator()
     model.test_run()
 
 
