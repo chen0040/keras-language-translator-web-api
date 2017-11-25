@@ -34,13 +34,14 @@ python eng_to_cmn_char_seq2seq_train.py
 ```
 
 The above commands will train seq2seq model using eng-to-chinese dataset on the character-level and store the trained model
-in "chatbot_train/models/eng-to-cmn/eng-to-cmn-char-**"
+in "translator_train/models/eng-to-cmn/eng-to-cmn-char-**"
 
 If you like to train other models, you can use the same command above on another train python scripts:
 
-* eng_to_cmn_word_seq2seq_train.py: train on eng-to-chinese on word-level
-* eng_to_fra_char_seq2seq_train.py: train on eng-to-french on character-level
-* eng_to_fra_word_seq2seq_train.py: train on eng-to-french on word-level
+* eng_to_cmn_word_translator_train.py: train on eng-to-chinese on word-level (one hot encoding)
+* eng_to_cmn_glove_translator_train.py: train on eng-to-chinese on word-level (one hot encoding)
+* eng_to_fra_char_translator_train.py: train on eng-to-french on character-level
+* eng_to_fra_word_translator_train.py: train on eng-to-french on word-level
 
 ## Running Web Api Server
 
@@ -54,7 +55,8 @@ Now navigate your browser to http://localhost:5000 and you can try out various p
 trained seq2seq models:
 
 * Character-level seq2seq models
-* Word-level seq2seq models
+* Word-level seq2seq models (one hot encoding)
+* Word-level seq2seq models (GloVe encoding)
 
 ## Invoke Web Api
 
