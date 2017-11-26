@@ -84,12 +84,12 @@ class EngToCmnGloveTranslator(object):
 
     def __init__(self):
         self.word2em = load_glove()
-        self.unknown_emb = np.load(MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-unknown-emb.npy').items()
+        self.unknown_emb = np.load(MODEL_DIR_PATH + '/eng-to-cmn-glove-unknown-emb.npy').items()
         self.target_word2idx = np.load(
-            MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-target-word2idx.npy').item()
+            MODEL_DIR_PATH + '/eng-to-cmn-glove-target-word2idx.npy').item()
         self.target_idx2word = np.load(
-            MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-target-idx2word.npy').item()
-        context = np.load(MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-context.npy').item()
+            MODEL_DIR_PATH + '/eng-to-cmn-glove-target-idx2word.npy').item()
+        context = np.load(MODEL_DIR_PATH + '/eng-to-cmn-glove-context.npy').item()
         self.max_decoder_seq_length = context['decoder_max_seq_length']
         self.num_encoder_tokens = context['num_encoder_tokens']
         self.num_decoder_tokens = context['num_decoder_tokens']
@@ -107,7 +107,7 @@ class EngToCmnGloveTranslator(object):
 
         self.model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-        self.model.load_weights(MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-weights.h5')
+        self.model.load_weights(MODEL_DIR_PATH + '/eng-to-cmn-glove-weights.h5')
         self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
         self.encoder_model = Model(encoder_inputs, encoder_states)
