@@ -84,14 +84,14 @@ class EngToCmnGloveTranslator(object):
 
     def __init__(self):
         self.word2em = load_glove()
-        self.unknown_emb = np.load(MODEL_DIR_PATH + '/eng-to-cmn-glove-unknown-emb.npy').items()
+        self.unknown_emb = np.load(MODEL_DIR_PATH + '/eng-to-cmn-glove-unknown-emb.npy').item()
         self.target_word2idx = np.load(
             MODEL_DIR_PATH + '/eng-to-cmn-glove-target-word2idx.npy').item()
         self.target_idx2word = np.load(
             MODEL_DIR_PATH + '/eng-to-cmn-glove-target-idx2word.npy').item()
         context = np.load(MODEL_DIR_PATH + '/eng-to-cmn-glove-context.npy').item()
         self.max_decoder_seq_length = context['decoder_max_seq_length']
-        self.num_encoder_tokens = context['num_encoder_tokens']
+        self.max_encoder_seq_length = context['encoder_max_seq_length']
         self.num_decoder_tokens = context['num_decoder_tokens']
 
         encoder_inputs = Input(shape=(None, GLOVE_EMBEDDING_SIZE), name='encoder_inputs')
