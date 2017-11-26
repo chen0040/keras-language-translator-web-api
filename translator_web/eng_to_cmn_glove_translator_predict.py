@@ -11,7 +11,9 @@ import zipfile
 HIDDEN_UNITS = 256
 GLOVE_EMBEDDING_SIZE = 100
 
-GLOVE_MODEL = "very_large_data/glove.6B." + str(GLOVE_EMBEDDING_SIZE) + "d.txt"
+VERY_LARGE_DATA_DIR_PATH = '../translator_train/very_large_data'
+MODEL_DIR_PATH = '../translator_train/models/eng-to-cmn'
+GLOVE_MODEL = VERY_LARGE_DATA_DIR_PATH + "/glove.6B." + str(GLOVE_EMBEDDING_SIZE) + "d.txt"
 WHITELIST = 'abcdefghijklmnopqrstuvwxyz1234567890?.,'
 
 
@@ -39,10 +41,10 @@ def reporthook(block_num, block_size, total_size):
 def download_glove():
     if not os.path.exists(GLOVE_MODEL):
 
-        glove_zip = 'very_large_data/glove.6B.zip'
+        glove_zip = VERY_LARGE_DATA_DIR_PATH + '/glove.6B.zip'
 
-        if not os.path.exists('very_large_data'):
-            os.makedirs('very_large_data')
+        if not os.path.exists(VERY_LARGE_DATA_DIR_PATH):
+            os.makedirs(VERY_LARGE_DATA_DIR_PATH)
 
         if not os.path.exists(glove_zip):
             print('glove file does not exist, downloading from internet')
@@ -51,7 +53,7 @@ def download_glove():
 
         print('unzipping glove file')
         zip_ref = zipfile.ZipFile(glove_zip, 'r')
-        zip_ref.extractall('very_large_data')
+        zip_ref.extractall(VERY_LARGE_DATA_DIR_PATH)
         zip_ref.close()
 
 
@@ -82,12 +84,12 @@ class EngToCmnGloveTranslator(object):
 
     def __init__(self):
         self.word2em = load_glove()
-        self.unknown_emb = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-glove-unknown-emb.npy').items()
+        self.unknown_emb = np.load(MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-unknown-emb.npy').items()
         self.target_word2idx = np.load(
-            '../translator_train/models/eng-to-cmn/eng-to-cmn-glove-target-word2idx.npy').item()
+            MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-target-word2idx.npy').item()
         self.target_idx2word = np.load(
-            '../translator_train/models/eng-to-cmn/eng-to-cmn-glove-target-idx2word.npy').item()
-        context = np.load('../translator_train/models/eng-to-cmn/eng-to-cmn-glove-context.npy').item()
+            MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-target-idx2word.npy').item()
+        context = np.load(MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-context.npy').item()
         self.max_decoder_seq_length = context['decoder_max_seq_length']
         self.num_encoder_tokens = context['num_encoder_tokens']
         self.num_decoder_tokens = context['num_decoder_tokens']
@@ -105,9 +107,7 @@ class EngToCmnGloveTranslator(object):
 
         self.model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-        # model_json = open('../translator_train/models/eng-to-cmn/eng-to-cmn-glove-architecture.json', 'r').read()
-        # self.model = model_from_json(model_json)
-        self.model.load_weights('../translator_train/models/eng-to-cmn/eng-to-cmn-glove-weights.h5')
+        self.model.load_weights(MODEL_DIR_PATH + MODEL_DIR_PATH + '/eng-to-cmn-glove-weights.h5')
         self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
         self.encoder_model = Model(encoder_inputs, encoder_states)
