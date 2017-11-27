@@ -84,11 +84,12 @@ class EngToFraGloveTranslator(object):
 
     def __init__(self):
         self.word2em = load_glove()
+        self.unknown_emb = np.load(MODEL_DIR_PATH + '/eng-to-fra-glove-unknown-emb.npy')
         self.target_word2idx = np.load(
-            MODEL_DIR_PATH + '/eng-to-fra-word-target-word2idx.npy').item()
+            MODEL_DIR_PATH + '/eng-to-fra-glove-target-word2idx.npy').item()
         self.target_idx2word = np.load(
-            MODEL_DIR_PATH + '/eng-to-fra-word-target-idx2word.npy').item()
-        context = np.load(MODEL_DIR_PATH + '/eng-to-fra-word-context.npy').item()
+            MODEL_DIR_PATH + '/eng-to-fra-glove-target-idx2word.npy').item()
+        context = np.load(MODEL_DIR_PATH + '/eng-to-fra-glove-context.npy').item()
         print(context)
         self.max_encoder_seq_length = context['encoder_max_seq_length']
         self.max_decoder_seq_length = context['decoder_max_seq_length']
@@ -107,7 +108,7 @@ class EngToFraGloveTranslator(object):
 
         self.model = Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
-        self.model.load_weights(MODEL_DIR_PATH + '/eng-to-fra-word-weights.h5')
+        self.model.load_weights(MODEL_DIR_PATH + '/eng-to-fra-glove-weights.h5')
         self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
         self.encoder_model = Model(encoder_inputs, encoder_states)

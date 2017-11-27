@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+    <hr />
+    You said: {{ sentence }}
+    <hr />
+    <ul>
+        <li>In French: {{ translated }}</li>
+    </ul>
+
+    <hr />
+    <a href="{{ url_for('eng_to_fra_word_glove_translator') }}">Try another one</a>
+{% endblock %}

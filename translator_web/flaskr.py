@@ -4,6 +4,8 @@ from translator_web.eng_to_fra_char_translator_predict import EngToFraCharTransl
 from translator_web.eng_to_cmn_char_translator_predict import EngToCmnCharTranslator
 from translator_web.eng_to_fra_word_translator_predict import EngToFraWordTranslator
 from translator_web.eng_to_cmn_word_translator_predict import EngToCmnWordTranslator
+from translator_web.eng_to_fra_glove_translator_predict import EngToFraGloveTranslator
+from translator_web.eng_to_cmn_glove_translator_predict import EngToCmnGloveTranslator
 
 app = Flask(__name__)
 app.config.from_object(__name__)  # load config from this file , flaskr.py
@@ -16,6 +18,8 @@ eng_to_fra_translator_c = EngToFraCharTranslator()
 eng_to_cmn_translator_c = EngToCmnCharTranslator()
 eng_to_fra_translator_w = EngToFraWordTranslator()
 eng_to_cmn_translator_w = EngToCmnWordTranslator()
+eng_to_fra_translator_g = EngToFraGloveTranslator()
+eng_to_cmn_translator_g = EngToCmnGloveTranslator()
 
 
 @app.route('/')
@@ -95,6 +99,40 @@ def eng_to_cmn_word_translator():
     return render_template('eng_to_cmn_word_translator.html')
 
 
+@app.route('/eng_to_fra_word_glove_translator', methods=['POST', 'GET'])
+def eng_to_fra_word_glove_translator():
+    if request.method == 'POST':
+        if 'sentence' not in request.form:
+            flash('No sentence post')
+            redirect(request.url)
+        elif request.form['sentence'] == '':
+            flash('No sentence')
+            redirect(request.url)
+        else:
+            sent = request.form['sentence']
+            translated = eng_to_fra_translator_g.translate_lang(sent)
+            return render_template('eng_to_fra_word_glove_translator_result.html', sentence=sent,
+                                   translated=translated)
+    return render_template('eng_to_fra_word_glove_translator.html')
+
+
+@app.route('/eng_to_cmn_word_glove_translator', methods=['POST', 'GET'])
+def eng_to_cmn_word_glove_translator():
+    if request.method == 'POST':
+        if 'sentence' not in request.form:
+            flash('No sentence post')
+            redirect(request.url)
+        elif request.form['sentence'] == '':
+            flash('No sentence')
+            redirect(request.url)
+        else:
+            sent = request.form['sentence']
+            sentiments = eng_to_cmn_translator_g.translate_lang(sent)
+            return render_template('eng_to_cmn_word_glove_translator_result.html', sentence=sent,
+                                   sentiments=sentiments)
+    return render_template('eng_to_cmn_word_glove_translator.html')
+
+
 @app.route('/translate_eng', methods=['POST', 'GET'])
 def translate_eng():
     if request.method == 'POST':
@@ -117,6 +155,10 @@ def translate_eng():
         target_text = eng_to_fra_translator_w.translate_lang(sentence)
     elif level == 'word' and target_lang == 'chinese':
         target_text = eng_to_cmn_translator_w.translate_lang(sentence)
+    elif level == 'word-glove' and target_lang == 'french':
+        target_text = eng_to_fra_translator_g.translate_lang(sentence)
+    elif level == 'word-glove' and target_lang == 'chinese':
+        target_text = eng_to_cmn_translator_g.translate_lang(sentence)
     return jsonify({
         'sentence': sentence,
         'translated': target_text,
@@ -135,7 +177,10 @@ def main():
     eng_to_cmn_translator_c.test_run()
     eng_to_fra_translator_w.test_run()
     eng_to_cmn_translator_w.test_run()
+    eng_to_fra_translator_g.test_run()
+    eng_to_cmn_translator_g.test_run()
     app.run(debug=True)
+
 
 if __name__ == '__main__':
     main()

@@ -39,9 +39,10 @@ in "translator_train/models/eng-to-cmn/eng-to-cmn-char-**"
 If you like to train other models, you can use the same command above on another train python scripts:
 
 * eng_to_cmn_word_translator_train.py: train on eng-to-chinese on word-level (one hot encoding)
-* eng_to_cmn_glove_translator_train.py: train on eng-to-chinese on word-level (one hot encoding)
+* eng_to_cmn_glove_translator_train.py: train on eng-to-chinese on word-level (GloVe encoding)
 * eng_to_fra_char_translator_train.py: train on eng-to-french on character-level
-* eng_to_fra_word_translator_train.py: train on eng-to-french on word-level
+* eng_to_fra_word_translator_train.py: train on eng-to-french on word-level (one hot encoding)
+* eng_to_fra_glove_translator_train.py: train on eng-to-french on word-level (GloVe encoding)
 
 ## Running Web Api Server
 
@@ -92,7 +93,9 @@ Here are some examples for eng translation using some other configuration option
 
 ```bash
 curl -H 'Content-Type: application/json' -X POST -d '{"level":"char", "sentence":"Be nice.", "target_lang":"chinese"}' http://localhost:5000/translate_eng
+curl -H 'Content-Type: application/json' -X POST -d '{"level":"word-glove", "sentence":"Be nice.", "target_lang":"chinese"}' http://localhost:5000/translate_eng
 curl -H 'Content-Type: application/json' -X POST -d '{"level":"word", "sentence":"Be nice.", "target_lang":"french"}' http://localhost:5000/translate_eng
+curl -H 'Content-Type: application/json' -X POST -d '{"level":"word-glove", "sentence":"Be nice.", "target_lang":"french"}' http://localhost:5000/translate_eng
 curl -H 'Content-Type: application/json' -X POST -d '{"level":"char", "sentence":"Be nice.", "target_lang":"french"}' http://localhost:5000/translate_eng
 ```
 

@@ -84,7 +84,7 @@ class EngToCmnGloveTranslator(object):
 
     def __init__(self):
         self.word2em = load_glove()
-        self.unknown_emb = np.load(MODEL_DIR_PATH + '/eng-to-cmn-glove-unknown-emb.npy').item()
+        self.unknown_emb = np.load(MODEL_DIR_PATH + '/eng-to-cmn-glove-unknown-emb.npy')
         self.target_word2idx = np.load(
             MODEL_DIR_PATH + '/eng-to-cmn-glove-target-word2idx.npy').item()
         self.target_idx2word = np.load(
